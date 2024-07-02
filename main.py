@@ -63,19 +63,17 @@ def predict_diabetes():
     except Exception as e:
         return jsonify({'error': str(e)}), 400
     
+#prediction for parkinsons  
 @app.route('/predict_parkinson', methods=['POST'])
 def predict_parkinsons():
     try:
-        data = request.json
+        data = request.form.to_dict(flat=False)
         
-        # Extract and preprocess input data
-        input_data = np.array(data['input_data']).reshape(1, -1)
+        input_data = [float(data[key][0]) for key in data]
+        input_data = np.array(input_data).reshape(1, -1)
         std_data = scaler.transform(input_data)
 
-        # Perform prediction using loaded SVM model
         prediction = model_p.predict(std_data)
-
-        # Define result based on prediction
         if prediction[0] == 0:
             result = "The Person does not have Parkinson's Disease"
         else:
